@@ -1,38 +1,38 @@
 function [u_op,v_op,w_op,z_op,alpha_op] = Ainsworth_PolCal(SLC_HH,SLC_HV,SLC_VH,SLC_VV,Flag)
 % Polarization Calibration Based on Ainsworth Algorithm.
 %
-% ÊäÈë£º
-%   1£©SLC_HH    Ñ¡¶¨ÇøÓòµÄ HH Í¨µÀµÄ SLC Êı¾İ
-%   2£©SLC_HV               HV
-%   3£©SLC_VH               VH
-%   4£©SLC_VV               VV
-% ×¢£ºÓë¹ú¼Ê¹ßÀı±£³ÖÒ»ÖÂ£¬´ú±í¡°Ç°ÊÕºó·¢¡±£¨Í¬AinsworthËã·¨£©;
-%   5£©Flag      ±ê¼Ç£ºa£©Îª0Ôò½öÊä³öµü´ú×îÖÕ½â£»b£©Îª1ÔòÊä³öµü´ú¹ı³ÌÈ«²¿Öµ£¨ÖĞ¼äÖµºÍ×îÖÕ½â£©;
-%                ³ı·ÇĞèÒªµ÷ÊÔ£¬ÔòÍÆ¼öÑ¡0;
+% è¾“å…¥ï¼š
+%   1ï¼‰SLC_HH    é€‰å®šåŒºåŸŸçš„ HH é€šé“çš„ SLC æ•°æ®
+%   2ï¼‰SLC_HV               HV
+%   3ï¼‰SLC_VH               VH
+%   4ï¼‰SLC_VV               VV
+% æ³¨ï¼šä¸å›½é™…æƒ¯ä¾‹ä¿æŒä¸€è‡´ï¼Œä»£è¡¨â€œå‰æ”¶åå‘â€ï¼ˆåŒAinsworthç®—æ³•ï¼‰;
+%   5ï¼‰Flag      æ ‡è®°ï¼šaï¼‰ä¸º0åˆ™ä»…è¾“å‡ºè¿­ä»£æœ€ç»ˆè§£ï¼›bï¼‰ä¸º1åˆ™è¾“å‡ºè¿­ä»£è¿‡ç¨‹å…¨éƒ¨å€¼ï¼ˆä¸­é—´å€¼å’Œæœ€ç»ˆè§£ï¼‰;
+%                é™¤ééœ€è¦è°ƒè¯•ï¼Œåˆ™æ¨èé€‰0;
 %
-% Êä³ö£º
-%   1£©¶¨±ê²ÎÊı u_op,v_op,w_op,z_op,alpha_op
-%   ×¢1£º
-%       Èç¹û Flag==1£¬ÔòÊä³öÊÇÏòÁ¿£ºµÚ1¸öÔªËØ±íÊ¾³õÖµ£¬µÚ2¸öÖÁ×îºóÒÀ´Î±íÊ¾¸÷µü´ú½á¹û£»
-%       Èç¹û Flag==0£¬ÔòÊä³öÊÇÒ»¸öÖµ£¬±íÊ¾µü´ú×îÖÕ½â£»
-%   ×¢2£º
-%       ÕâÀïÃ»ÓĞ¶Ô½ÓÊÕÍ¨µÀ²»Æ½ºâ k ºÍ ¾ø¶ÔÏµÍ³ÔöÒæ Y ¶¨±ê£¨ÒòÎª»¹¶îÍâĞèÒª½Ç·´ÉäÆ÷Êı¾İ£©
-%       k ºÍ Y ÓÉÁíÍâµÄ³ÌĞò£¬ÀûÓÃÈıÃæ½Ç·´ÉäÆ÷Êı¾İ½øĞĞÇó½â¡£
+% è¾“å‡ºï¼š
+%   1ï¼‰å®šæ ‡å‚æ•° u_op,v_op,w_op,z_op,alpha_op
+%   æ³¨1ï¼š
+%       å¦‚æœ Flag==1ï¼Œåˆ™è¾“å‡ºæ˜¯å‘é‡ï¼šç¬¬1ä¸ªå…ƒç´ è¡¨ç¤ºåˆå€¼ï¼Œç¬¬2ä¸ªè‡³æœ€åä¾æ¬¡è¡¨ç¤ºå„è¿­ä»£ç»“æœï¼›
+%       å¦‚æœ Flag==0ï¼Œåˆ™è¾“å‡ºæ˜¯ä¸€ä¸ªå€¼ï¼Œè¡¨ç¤ºè¿­ä»£æœ€ç»ˆè§£ï¼›
+%   æ³¨2ï¼š
+%       è¿™é‡Œæ²¡æœ‰å¯¹æ¥æ”¶é€šé“ä¸å¹³è¡¡ k å’Œ ç»å¯¹ç³»ç»Ÿå¢ç›Š Y å®šæ ‡ï¼ˆå› ä¸ºè¿˜é¢å¤–éœ€è¦è§’åå°„å™¨æ•°æ®ï¼‰
+%       k å’Œ Y ç”±å¦å¤–çš„ç¨‹åºï¼Œåˆ©ç”¨ä¸‰é¢è§’åå°„å™¨æ•°æ®è¿›è¡Œæ±‚è§£ã€‚
 %
-% ±¾³ÌĞò½ØÖ¹ÖÁ£º2017.12.13. 21:19
+% æœ¬ç¨‹åºæˆªæ­¢è‡³ï¼š2017.12.13. 21:19
 
 
 %%
 % -------------------------------------------------------------------------
-%                           Ainsworth Ëã·¨
+%                           Ainsworth ç®—æ³•
 % -------------------------------------------------------------------------
 %
-% ÊäÈë£ºÄ³Ò»¿éÇøÓò£¨·Ö²¼Ä¿±ê£©µÄÈ«¼«»¯£¨ËÄÍ¨µÀ£© SLC Êı¾İ
+% è¾“å…¥ï¼šæŸä¸€å—åŒºåŸŸï¼ˆåˆ†å¸ƒç›®æ ‡ï¼‰çš„å…¨æåŒ–ï¼ˆå››é€šé“ï¼‰ SLC æ•°æ®
 %
-% Êä³ö£º¶¨±ê²ÎÊı½á¹û£¬°üÀ¨ u,v,w,z ºÍ alpha£»²»°üÀ¨ Y ºÍ k¡£
+% è¾“å‡ºï¼šå®šæ ‡å‚æ•°ç»“æœï¼ŒåŒ…æ‹¬ u,v,w,z å’Œ alphaï¼›ä¸åŒ…æ‹¬ Y å’Œ kã€‚
 
 
-%% ¼ÆËã¹Û²â¾ØÕóOµÄ×ÔÏà¹Ø¾ØÕóC£¨4¡Á4¾ØÕó£©
+%% è®¡ç®—è§‚æµ‹çŸ©é˜µOçš„è‡ªç›¸å…³çŸ©é˜µCï¼ˆ4Ã—4çŸ©é˜µï¼‰
 C = zeros(4,4);
 % C11 = < Ohh * conj(Ohh) >
 C(1,1) = mean(mean(SLC_HH.*conj(SLC_HH)));
@@ -69,47 +69,48 @@ C(4,2) = mean(mean(SLC_VV.*conj(SLC_HV)));
 C(4,3) = mean(mean(SLC_VV.*conj(SLC_VH)));
 % C44 = < Ovv * conj(Ovv) >
 C(4,4) = mean(mean(SLC_VV.*conj(SLC_VV)));
-% ÖÁ´Ë£¬¹Û²â¾ØÕóOµÄ×ÔÏà¹Ø¾ØÕóC£¨4¡Á4¾ØÕó£©ÒÑ¾­¼ÆËãÍê±Ï¡£
+% è‡³æ­¤ï¼Œè§‚æµ‹çŸ©é˜µOçš„è‡ªç›¸å…³çŸ©é˜µCï¼ˆ4Ã—4çŸ©é˜µï¼‰å·²ç»è®¡ç®—å®Œæ¯•ã€‚
 
 
 %%
-% ¸Ã½Å±¾ÖĞ£¬²ÎÊı u,v,w,z,alpha ±íÊ¾ÎªÒ»¸öÏòÁ¿
-% µÚ 1 ¸öÔªËØ±íÊ¾³õÖµ
-% µÚ 2 ¸öµ½×îºóÒÀ´Î±íÊ¾¸÷µü´ú½á¹û
+% è¯¥è„šæœ¬ä¸­ï¼Œå‚æ•° u,v,w,z,alpha è¡¨ç¤ºä¸ºä¸€ä¸ªå‘é‡
+% ç¬¬ 1 ä¸ªå…ƒç´ è¡¨ç¤ºåˆå€¼
+% ç¬¬ 2 ä¸ªåˆ°æœ€åä¾æ¬¡è¡¨ç¤ºå„è¿­ä»£ç»“æœ
 
 
-%% ³õÊ¼»¯²ÎÊı
-% 1£©´®ÈÅÒò×Ó£ºu0 = v0 = w0 = z0 = 0
+%% åˆå§‹åŒ–å‚æ•°
+% 1ï¼‰ä¸²æ‰°å› å­ï¼šu0 = v0 = w0 = z0 = 0
 u(1) = 0;
 v(1) = 0;
 w(1) = 0;
 z(1) = 0;
-% 2£©k ÖÃÎª1£ºk0 = 1 ¡ª¡ª ÓÉÓÚ¸Ã½Å±¾²¢²»¼ÆËãÒò×Ók£¬Òò´ËÔÚ¸Ã½Å±¾ÖĞÊ¼ÖÕÎªk0.
+% 2ï¼‰k ç½®ä¸º1ï¼šk0 = 1 â€”â€” ç”±äºè¯¥è„šæœ¬å¹¶ä¸è®¡ç®—å› å­kï¼Œå› æ­¤åœ¨è¯¥è„šæœ¬ä¸­å§‹ç»ˆä¸ºk0.
 k0 = 1;
-% 3£©¼ÆËã alpha µÄ³õÖµ alpha0
-alpha0_abs = abs(C(3,3)/C(2,2))^(1/4);
+% 3ï¼‰è®¡ç®— alpha çš„åˆå€¼ alpha0
+alpha0_abs = abs(C(3,3)/C(2,2))^(1/2);
+%alpha0_abs = abs(C(3,3)/C(2,2))^(1/4);åŸä½œè€…ï¼Ÿ
 % -----------------------------------------------------------------
-% alpha0_phase = atan(C(3,2)) / 2;% Ô­Ê¼ÎÄÏ×ÖĞµÄ±í´ïÊ½£¬ÎÒÈÏÎªÓĞÎó£¬¸ÄÎªÓÃÏÂÊ½¼ÆËã
+% alpha0_phase = atan(C(3,2)) / 2;% åŸå§‹æ–‡çŒ®ä¸­çš„è¡¨è¾¾å¼ï¼Œæˆ‘è®¤ä¸ºæœ‰è¯¯ï¼Œæ”¹ä¸ºç”¨ä¸‹å¼è®¡ç®—
 alpha0_phase = angle(C(3,2)) / 2;
 % -----------------------------------------------------------------
 alpha(1) = alpha0_abs * exp(1j*alpha0_phase);
 clear alpha0_abs;clear alpha0_phase;
 
 
-%% µü´ú¼ÆËã¶¨±ê²ÎÊı u,v,w,z,alpha
-N_iter = 100;% µü´ú´ÎÊı
-Epsilon = 1e-15;% ãĞÖµ
+%% è¿­ä»£è®¡ç®—å®šæ ‡å‚æ•° u,v,w,z,alpha
+N_iter = 100;% è¿­ä»£æ¬¡æ•°
+Epsilon = 1e-15;% é˜ˆå€¼
 
-% µü´ú½áÊøÌõ¼ş£º£¨1£©´ïµ½µü´ú´ÎÊı£»»ò£¨2£©alpha µÄ±ä»¯Ğ¡ÓÚ¸ø¶¨ãĞÖµ
+% è¿­ä»£ç»“æŸæ¡ä»¶ï¼šï¼ˆ1ï¼‰è¾¾åˆ°è¿­ä»£æ¬¡æ•°ï¼›æˆ–ï¼ˆ2ï¼‰alpha çš„å˜åŒ–å°äºç»™å®šé˜ˆå€¼
 for i_iter = 1 : N_iter
-    if 1 == i_iter  % µÚ1´Î¼ÆËãÊ±²ÉÓÃÏÂÊ½¡£´ËÊ±µÄ D_Matrix(M) ÓÉÓÚ²»¿¼ÂÇ´®ÈÅ£¬Òò´Ë¼ò»¯Îª¶Ô½ÇÕó G.
-                    % ÕâÊÇÖ±½Ó½« inv(G) * C * inv(G') Õ¹¿ªºóµÄ±í´ïÊ½.
+    if 1 == i_iter  % ç¬¬1æ¬¡è®¡ç®—æ—¶é‡‡ç”¨ä¸‹å¼ã€‚æ­¤æ—¶çš„ D_Matrix(M) ç”±äºä¸è€ƒè™‘ä¸²æ‰°ï¼Œå› æ­¤ç®€åŒ–ä¸ºå¯¹è§’é˜µ G.
+                    % è¿™æ˜¯ç›´æ¥å°† inv(G) * C * inv(G') å±•å¼€åçš„è¡¨è¾¾å¼.
         Sigma_1_Matrix = [
             C(1,1)/( abs(k0*alpha(i_iter))^2 ),                    C(1,2)*conj(alpha(i_iter))/(k0*alpha(i_iter)), C(1,3)/(k0*abs(alpha(i_iter))^2),              C(1,4)*conj(k0)*conj(alpha(i_iter))/(k0*alpha(i_iter));
             C(2,1)*alpha(i_iter)/(conj(k0)*conj(alpha(i_iter))),   C(2,2)*abs(alpha(i_iter))^2,                   C(2,3)*alpha(i_iter)/(conj(alpha(i_iter))),    C(2,4)*conj(k0)*abs(alpha(i_iter))^2;
             C(3,1)/(conj(k0)*abs(alpha(i_iter))^2),                C(3,2)*conj(alpha(i_iter))/alpha(i_iter),      C(3,3)/(abs(alpha(i_iter))^2),                 C(3,4)*conj(k0)*conj(alpha(i_iter))/alpha(i_iter);
             C(4,1)*k0*alpha(i_iter)/(conj(k0)*conj(alpha(i_iter))),C(4,2)*k0*abs(alpha(i_iter))^2,                C(4,3)*k0*alpha(i_iter)/(conj(alpha(i_iter))), C(4,4)*abs(k0*alpha(i_iter))^2;
-        ];% Ô­Ê¼ÎÄÏ×Ê½(10).
+        ];% åŸå§‹æ–‡çŒ®å¼(10).
     end
     
     A = ( Sigma_1_Matrix(2,1) + Sigma_1_Matrix(3,1) )/2;
@@ -137,81 +138,81 @@ for i_iter = 1 : N_iter
     X_Matrix_Need = [
         real(X_Matrix);
         imag(X_Matrix);
-    ];% 8 ¡Á 1
+    ];% 8 Ã— 1
     Zeta_Tau_Matrix_Need = [
         real( Zeta_Matrix + Tau_Matrix ),   -1*imag( Zeta_Matrix - Tau_Matrix );
         imag( Zeta_Matrix + Tau_Matrix ),      real( Zeta_Matrix - Tau_Matrix );
-    ];% 8 ¡Á 8
+    ];% 8 Ã— 8
     
-    % Çó½âÏßĞÔ·½³Ì×é£¬µÃµ½´®ÈÅÒò×ÓĞŞÕıÁ¿£¨ÁĞÏòÁ¿£©£º
-    %       ÏßĞÔ·½³Ì×éÎª£º X_Matrix_Need = Zeta_Tau_Matrix_Need * delta_Solve;
-    delta_Solve = linsolve( Zeta_Tau_Matrix_Need, X_Matrix_Need );% ÀûÓÃMATLABº¯Êı½øĞĞÇó½â
+    % æ±‚è§£çº¿æ€§æ–¹ç¨‹ç»„ï¼Œå¾—åˆ°ä¸²æ‰°å› å­ä¿®æ­£é‡ï¼ˆåˆ—å‘é‡ï¼‰ï¼š
+    %       çº¿æ€§æ–¹ç¨‹ç»„ä¸ºï¼š X_Matrix_Need = Zeta_Tau_Matrix_Need * delta_Solve;
+    delta_Solve = linsolve( Zeta_Tau_Matrix_Need, X_Matrix_Need );% åˆ©ç”¨MATLABå‡½æ•°è¿›è¡Œæ±‚è§£
     
     delta_u = delta_Solve(1) + 1j*delta_Solve(5);
     delta_v = delta_Solve(2) + 1j*delta_Solve(6);
     delta_w = delta_Solve(3) + 1j*delta_Solve(7);
     delta_z = delta_Solve(4) + 1j*delta_Solve(8);
     
-    % ¸üĞÂ´®ÈÅÒò×Ó u,v,w,z
+    % æ›´æ–°ä¸²æ‰°å› å­ u,v,w,z
     u(i_iter+1) = u(i_iter) + delta_u;
     v(i_iter+1) = v(i_iter) + delta_v;
     w(i_iter+1) = w(i_iter) + delta_w;
     z(i_iter+1) = z(i_iter) + delta_z;
     
-    % ¼ÆËã Sigma_2_Matrix
+    % è®¡ç®— Sigma_2_Matrix
     Matrix_uvwz = [
         1,                          v(i_iter+1),                w(i_iter+1),                v(i_iter+1)*w(i_iter+1);
         z(i_iter+1),                1,                          w(i_iter+1)*z(i_iter+1),    w(i_iter+1);
         u(i_iter+1),                u(i_iter+1)*v(i_iter+1),    1,                          v(i_iter+1);
         u(i_iter+1)*z(i_iter+1),    u(i_iter+1),                z(i_iter+1),                1;
     ];
-%     Sigma_2_Matrix = inv(Matrix_uvwz) * Sigma_1_Matrix * inv( Matrix_uvwz' ); % ×¢Òâ×îºóÄÇ¸öÊÇ¹²éî×ªÖÃ¡£
+%     Sigma_2_Matrix = inv(Matrix_uvwz) * Sigma_1_Matrix * inv( Matrix_uvwz' ); % æ³¨æ„æœ€åé‚£ä¸ªæ˜¯å…±è½­è½¬ç½®ã€‚
     Sigma_2_Matrix = Matrix_uvwz \ Sigma_1_Matrix;
     Sigma_2_Matrix = Sigma_2_Matrix / ( Matrix_uvwz' );
     
-    % ¼ÆËã¸üĞÂÁ¿ alpha_Updata ²¢¸üĞÂ alpha
+    % è®¡ç®—æ›´æ–°é‡ alpha_Updata å¹¶æ›´æ–° alpha
     alpha_Updata_abs = abs(Sigma_2_Matrix(3,3)/Sigma_2_Matrix(2,2))^(1/4);
 % -----------------------------------------------------------------
-%     alpha_Updata_phase = atan(Sigma_2_Matrix(3,2)) / 2;% Ô­Ê¼ÎÄÏ×ÖĞµÄ±í´ïÊ½£¬ÎÒÈÏÎªÓĞÎó£¬¸ÄÎªÓÃÏÂÊ½¼ÆËã
+%     alpha_Updata_phase = atan(Sigma_2_Matrix(3,2)) / 2;% åŸå§‹æ–‡çŒ®ä¸­çš„è¡¨è¾¾å¼ï¼Œæˆ‘è®¤ä¸ºæœ‰è¯¯ï¼Œæ”¹ä¸ºç”¨ä¸‹å¼è®¡ç®—
     alpha_Updata_phase = angle(Sigma_2_Matrix(3,2)) / 2;
 % -----------------------------------------------------------------
     alpha_Updata = alpha_Updata_abs * exp(1j*alpha_Updata_phase);
     alpha(i_iter+1) = alpha(i_iter) * alpha_Updata;
     
-    % ¼ÆËã¶¨±ê¾ØÕó
-    %   ×¢£ºµÚÒ»¸ö¾ØÕóµÄ alpha ÊÇold¶ø²»ÊÇ±¾´Î¸üĞÂºóµÄ£¬Ïê¼ûÔ­Ê¼ÎÄÏ×¡£
+    % è®¡ç®—å®šæ ‡çŸ©é˜µ
+    %   æ³¨ï¼šç¬¬ä¸€ä¸ªçŸ©é˜µçš„ alpha æ˜¯oldè€Œä¸æ˜¯æœ¬æ¬¡æ›´æ–°åçš„ï¼Œè¯¦è§åŸå§‹æ–‡çŒ®ã€‚
     D_Matrix = diag( [alpha(i_iter), 1/alpha(i_iter), alpha(i_iter), 1/alpha(i_iter)] )...
         * Matrix_uvwz...
         * diag( [alpha_Updata, 1/alpha_Updata, alpha_Updata, 1/alpha_Updata] );
 % --------------------------------------------------------------------
-%     % £¨1£© ¸üĞÂ¹Û²âĞ­·½²î¾ØÕóÎª C = Sigma_2_Matrix;¡ª¡ª¸ù¾İÕÅºìÍõ³¬µÄÊé£¬ÕâÀïÒ²ÓĞÒÉÎÊ£¡
-%     C = Sigma_2_Matrix;¡ª¡ª²»¶Ô
-    % £¨2£©»¹ÊÇÓÃ¼ÙÉè u=v=w=z=0 Ê±µÄ¾ØÕó G À´¼ÆËã Sigma_1_Matrix£¬
-    % ¹ÊÖ±½Ó·µ»Øµ½±¾Ñ­»·¿ªÍ·£¬É¶Ò²²»¸É ¡ª¡ª ²»¶Ô
+%     % ï¼ˆ1ï¼‰ æ›´æ–°è§‚æµ‹åæ–¹å·®çŸ©é˜µä¸º C = Sigma_2_Matrix;â€”â€”æ ¹æ®å¼ çº¢ç‹è¶…çš„ä¹¦ï¼Œè¿™é‡Œä¹Ÿæœ‰ç–‘é—®ï¼
+%     C = Sigma_2_Matrix;â€”â€”ä¸å¯¹
+    % ï¼ˆ2ï¼‰è¿˜æ˜¯ç”¨å‡è®¾ u=v=w=z=0 æ—¶çš„çŸ©é˜µ G æ¥è®¡ç®— Sigma_1_Matrixï¼Œ
+    % æ•…ç›´æ¥è¿”å›åˆ°æœ¬å¾ªç¯å¼€å¤´ï¼Œå•¥ä¹Ÿä¸å¹² â€”â€” ä¸å¯¹
     
-    % £¨3£©ÓÃ°üÀ¨ u,v,w,z µÄ¾ØÕó D_Matrix(M) À´¸üĞÂ Sigma_1_Matrix.
-%     Sigma_1_Matrix = inv(D_Matrix) * C * inv(D_Matrix');% ±í´ïÊ½
+    % ï¼ˆ3ï¼‰ç”¨åŒ…æ‹¬ u,v,w,z çš„çŸ©é˜µ D_Matrix(M) æ¥æ›´æ–° Sigma_1_Matrix.
+%     Sigma_1_Matrix = inv(D_Matrix) * C * inv(D_Matrix');% è¡¨è¾¾å¼
     Sigma_1_Matrix = D_Matrix \ C;
     Sigma_1_Matrix = Sigma_1_Matrix / (D_Matrix');  
 % --------------------------------------------------------------------
     
-    % Èç¹û´ïµ½ãĞÖµÔò½áÊøµü´ú
+    % å¦‚æœè¾¾åˆ°é˜ˆå€¼åˆ™ç»“æŸè¿­ä»£
     if ( abs(alpha(i_iter+1) - alpha(i_iter)) ) < Epsilon
         break;
     end
 end
 
 
-%% ·µ»ØÖµ
+%% è¿”å›å€¼
 if Flag == 0
-    % Êä³ö×îÖÕ½â
+    % è¾“å‡ºæœ€ç»ˆè§£
     u_op = u(end);
     v_op = v(end);
     w_op = w(end);
     z_op = z(end);
     alpha_op = alpha(end);
 else
-    % Êä³öµü´ú¹ı³ÌÈ«²¿½â£¬°üÀ¨³õÊ¼Öµ£¬ÖĞ¼äÖµ£¬×îÖÕ½â¡£
+    % è¾“å‡ºè¿­ä»£è¿‡ç¨‹å…¨éƒ¨è§£ï¼ŒåŒ…æ‹¬åˆå§‹å€¼ï¼Œä¸­é—´å€¼ï¼Œæœ€ç»ˆè§£ã€‚
     u_op = u;
     v_op = v;
     w_op = w;
